@@ -1,14 +1,11 @@
+````markdown
 # 🎨 DDPM from Scratch using PyTorch
 
-A PyTorch implementation of a **Denoising Diffusion Probabilistic Model (DDPM)** trained from scratch on the Fashion-MNIST dataset using a custom U-Net architecture.
+A PyTorch implementation of a **Denoising Diffusion Probabilistic Model (DDPM)** built from scratch using a custom U-Net architecture.
 
-The project implements the complete diffusion process including:
+The project implements the complete diffusion pipeline, including the forward noising process, timestep conditioning, noise prediction, and reverse diffusion for image generation.
 
-- Forward diffusion (adding Gaussian noise)
-- Reverse diffusion (image generation)
-- Sinusoidal Time Embedding
-- Custom U-Net backbone
-- DDPM sampling algorithm
+The model was experimented with on both **MNIST** and **Fashion-MNIST**.
 
 ---
 
@@ -17,7 +14,11 @@ The project implements the complete diffusion process including:
 - ✅ DDPM implemented from scratch
 - ✅ Custom U-Net architecture
 - ✅ Sinusoidal Time Embeddings
-- ✅ Fashion-MNIST training
+- ✅ Forward Diffusion
+- ✅ Reverse Diffusion
+- ✅ Custom noise prediction network
+- ✅ MNIST experiment
+- ✅ Fashion-MNIST experiment
 - ✅ TensorBoard logging
 - ✅ Image sampling during training
 - ✅ AdamW optimizer
@@ -25,14 +26,19 @@ The project implements the complete diffusion process including:
 
 ---
 
-## Architecture
+## 🧠 How DDPM Works
 
-```
-Input Image
+DDPM learns to generate images by learning how to reverse a gradual Gaussian noising process.
+
+```text
+Original Image
       │
       ▼
 Forward Diffusion
 (Add Gaussian Noise)
+      │
+      ▼
+Noisy Image
       │
       ▼
    U-Net
@@ -43,95 +49,157 @@ Predicted Noise
       │
       ▼
 Reverse Diffusion
-(Image Generation)
-```
+      │
+      ▼
+Generated Image
+````
+
+During training, noise is progressively added to an image. The U-Net receives the noisy image along with a time embedding and learns to predict the noise that was added.
 
 ---
 
-## Network
+## 🏗️ Architecture
 
-```
+The project uses a custom U-Net architecture:
+
+```text
 Input
- ↓
+  │
+  ▼
 Down Block (64)
- ↓
+  │
+  ▼
 Down Block (128)
- ↓
+  │
+  ▼
 Down Block (256)
- ↓
+  │
+  ▼
 Bottleneck (512)
- ↑
+  │
+  ▼
 Up Block (256)
- ↑
+  │
+  ▼
 Up Block (128)
- ↑
+  │
+  ▼
 Up Block (64)
- ↓
-Output Noise Prediction
+  │
+  ▼
+Predicted Noise
 ```
+
+The network is conditioned on the diffusion timestep using **Sinusoidal Time Embeddings**.
 
 ---
 
-## Dataset
+## 📊 Datasets
 
-Fashion-MNIST
+### MNIST
 
-- Training Images: 60,000
-- Image Size: 28×28
-- Channels: 1
+* Training Images: 60,000
+* Image Size: `28 × 28`
+* Channels: `1`
+* Training Epochs: **100**
+
+### Fashion-MNIST
+
+* Training Images: 60,000
+* Image Size: `28 × 28`
+* Channels: `1`
+* Training Epochs: **1**
+
+The model was tested on both datasets to compare its behavior on handwritten digits and clothing images.
 
 ---
 
-## Training
+## 🏋️ Training
 
-Loss Function
+### Loss Function
 
-- Mean Squared Error (MSE)
+The model uses **Mean Squared Error (MSE)** between the actual noise and the noise predicted by the U-Net.
 
-Optimizer
-
-- AdamW
-
-Learning Rate
-
+```text
+MSE(Predicted Noise, Actual Noise)
 ```
+
+### Optimizer
+
+```text
+AdamW
+```
+
+### Learning Rate
+
+```text
 1e-4
 ```
 
-Epochs
+### Diffusion Steps
 
-```
-100
-```
-
-Diffusion Steps
-
-```
+```text
 1000
 ```
 
+### Training Configuration
+
+| Dataset       | Epochs | Average Loss |
+| ------------- | -----: | -----------: |
+| MNIST         |    100 |  **0.02008** |
+| Fashion-MNIST |      1 |  **0.06656** |
+
 ---
 
-## Results
+## 📈 Results
 
-Example:
+### MNIST
+
+After training for **100 epochs**, the model achieved an average training loss of approximately:
+
+```text
+0.02008
+```
+
+### Fashion-MNIST
+
+After training for **1 epoch**, the model achieved an average training loss of approximately:
+
+```text
+0.06656
+```
+
+The Fashion-MNIST experiment was trained for only one epoch as an initial experiment on a more visually complex dataset compared with MNIST.
+
+> **Note:** The reported values are training losses and should not be interpreted as direct measures of image-generation quality. Generated samples provide a more useful qualitative evaluation.
+
+---
+
+## 🖼️ Generated Samples
+
+Example generated samples and comparisons:
+
 ![](images/generated_vs_original.png)
 
 ---
 
-## TensorBoard
-# Loss
+## 📊 TensorBoard
+
+### Loss
+
 ![](images/tensorboard/loss.png)
 
---
-# Gradiant
+### Generated Images
+
 ![](images/tensorboard/image.png)
 
-```
+TensorBoard logs are stored in:
+
+```text
 Logs/
 ```
 
-Run
+Run TensorBoard with:
 
 ```bash
 tensorboard --logdir Logs
@@ -139,9 +207,9 @@ tensorboard --logdir Logs
 
 ---
 
-## Project Structure
+## 📁 Project Structure
 
-```
+```text
 .
 ├── Data/
 ├── images/
@@ -150,26 +218,27 @@ tensorboard --logdir Logs
 ├── ddpm_fashion_mnist.pt
 ├── ddpm_mnist_digits.pt
 ├── assets/
+├── requirements.txt
 └── README.md
 ```
 
 ---
 
-## Run
+## 🚀 Run the Project
 
-Clone the repository
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/ziadTeama-dev/pytorch-ddpm-from-scratch.git
 ```
 
-Install requirements
+### 2. Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Run
+### 3. Run the notebook
 
 ```bash
 jupyter notebook ddpm.ipynb
@@ -177,28 +246,33 @@ jupyter notebook ddpm.ipynb
 
 ---
 
-## Future Improvements
+## 🔬 Future Improvements
 
-- DDIM Sampling
-- Class Conditional DDPM
-- CIFAR-10 Training
-- EMA Model
-- Mixed Precision Training
-- Cosine Noise Schedule
-- Attention U-Net
-
----
-
-## Technologies
-
-- Python
-- PyTorch
-- Torchvision
-- TensorBoard
-- Matplotlib
+* DDIM Sampling
+* Class-Conditional DDPM
+* CIFAR-10 Training
+* Exponential Moving Average (EMA)
+* Mixed Precision Training
+* Cosine Noise Schedule
+* Attention U-Net
+* Longer Fashion-MNIST training
+* Improved sampling strategies
 
 ---
 
-## Author
+## 🛠️ Technologies
+
+* Python
+* PyTorch
+* Torchvision
+* TensorBoard
+* Matplotlib
+* Jupyter Notebook
+
+---
+
+## 👤 Author
 
 **Ziad Abdelhaliem Teama**
+
+

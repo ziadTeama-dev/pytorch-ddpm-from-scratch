@@ -1,5 +1,3 @@
 Data/
 .vscode/
-
-ddpm_fashion_mnist.pt
 ddpm_mnist_digits.pt
