@@ -1,4 +1,4 @@
-````markdown
+
 # 🎨 DDPM from Scratch using PyTorch
 
 A PyTorch implementation of a **Denoising Diffusion Probabilistic Model (DDPM)** built from scratch using a custom U-Net architecture.
